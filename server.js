@@ -22,20 +22,30 @@ app.set('view engine', 'hbs');
 //this function will be accessed b4 any other function will be (like app.get etc..)
 //if i will not call the next at the end of the function, the app.get and all other endpoints would`nt be accessible.
 //notice that the order of the use statements is crucial.
+//here we are writing to a log file asynchronously (if we had put the next() inside the call back it would w8 until the log is written and only ->
+//-> then it will route us to the app.get.
 app.use((req,res,next) => {
 
     const log = `${new Date().toString()} : req method :${req.method}, url : ${req.url} \n`;
     console.log(log);
-    fs.appendFile('server.log',log);
+    fs.appendFile('server.log',log,(err) =>{
+        if(err){
+            console.log("Unable to append to server log." , err);
+        }
+
+    });
     next();
+
 });
 
-app.use((req,res,next) => {
-        res.render('maintenance.hbs',{
-            infoMessage: 'the server is currently under an upgrade, it will be accessible soon.'
-        })
-    }
-);
+// app.use((req,res,next) => {
+//         res.render('maintenance.hbs',{
+//             infoMessage: 'the server is currently under an upgrade, it will be accessible soon.'
+//         });
+//         next();
+//     }
+// );
+
 //makes all the files inside the public folder accessible to all users.
 //usually we will put html,css files there.
 // __dirname is part of the wrapper function that wraps node apps , it specifies the project location in file system.
@@ -49,7 +59,7 @@ app.get('/', (req, res) => {
 });
 app.get('/info', (req,res) => {
     res.render('info.hbs',{
-        infoMessage: "some crucial information.",
+        infoMessage: "Welcome to Info page !",
     })
 });
 
