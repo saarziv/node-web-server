@@ -3,6 +3,9 @@ const hbs = require('hbs');
 const app = express();
 const fs  = require('fs');
 
+//setting port to the PORT evironment variable (of heroku when deploying) , in case  it doe`snt exists(when its local) the port will be 3000
+const port = process.env.PORT || 3000;
+
 //makes the call to the partials views available from the hbs files.
 hbs.registerPartials(__dirname + "/views/partials/");
 //makes a function available to all hbs files. with the name time.
@@ -56,4 +59,4 @@ app.get('/bad',(req,res) => {
     });
 });
 
-app.listen(3000,() => {console.log('listening on port 3000...')});
+app.listen(port,() => {console.log(`listening on port ${port}...`)});
